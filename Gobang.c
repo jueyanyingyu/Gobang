@@ -1,20 +1,56 @@
-#include "Gamejudge.h"
+#include "Gamesupport.h"
 
 int main(int argc, char *argv[]) {
-    putbroad();
-    WorB=WorB*-1;
-    while(!winjudge()) {     
-        down();
-        cheki();
+    int ComHd;
+    printf("Select game mode\n");
+    printf("'0' player vs player\n");
+    printf("'1' player vs computer\n");
+    if ('0'==getchar()) {
+    	getchar();
         system("cls");
         putbroad();
-    }
+        while(!winjudge()&&!isDraw()) {
+            scanf("%d%*c%d",&x,&y);
+            down();
+            cheki();
+            system("cls");
+            putbroad();
+        }
+    } else if ('1'==getchar()) {
+    	getchar();
+        system("cls");
+        putbroad();
+        printf("'0' computer first\n");
+        printf("'1' player first\n");
+        if ('0'==getchar()) {
+        	getchar();
+			ComHd=BLACK;
+        } else if ('1'==getchar()) {
+        	getchar();
+			ComHd=WHITE;
+        }
+        system("cls");
+        putbroad();
+        while(!winjudge()&&!isDraw()) {
+            if (ComHd==WorB) {
+            	ai();
+			} else {
+				scanf("%d%*c%d",&x,&y);
+			}
+            down();
+            cheki();
+            system("cls");
+            putbroad();
+        }
+    } else {
+    	return FALSE;
+	}
     if (WorB==BLACK) {
         printf("BLACK is winner");
     } else {
         printf("WHITE is winner");
     }
-    return FALSE;
+    return TRUE;
 }
 void putbroad() {
     printf("   ");
@@ -27,7 +63,7 @@ void putbroad() {
         printf("%2d  ",i);
         for (int j=0; j<N; j++) {
             switch(n[j][i]) {
-                case 0: {
+                case NONE: {
                         if (j==7&&i==7) {
                             printf("$ ");
                         } else if(i==14) {
@@ -37,11 +73,11 @@ void putbroad() {
                         }
                         break;
                     }
-                case -1: {
+                case BLACK: {
                         printf("X ");
                         break;
                     }
-                case 1: {
+                case WHITE: {
                         printf("O ");
                         break;
                     }
@@ -56,7 +92,6 @@ void putbroad() {
     return;
 }
 int down() {
-    scanf("%d,%d",&x,&y);
     char ch;
     while((ch=getchar())!='\n'&&ch!=EOF);
     if (x>=0&&y>=0&&x<N&&y<N&&n[x][y]==0) {
@@ -64,14 +99,12 @@ int down() {
         lastx=x;
         lasty=y;
         WorB=WorB*-1;
+        steps++;
         return TRUE;
     }
     return FALSE;
 }
 int winjudge() {
-    // 定义方向
-    int dx,dy;
-    //左右方向
     if(metajudge(1,0)) {
         return 1;
     } else if(metajudge(1,1)) {
@@ -99,10 +132,20 @@ int metajudge(int dx,int dy) {
         return FALSE;
     }
 }
+int isDraw() {
+	if (steps==225-1) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
 void cheki() {
     if (x==-1&&y==-1) {
         n[lastx][lasty]=0;
         return;
     }
     return;
+}
+void ai() {
+	
 }
