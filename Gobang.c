@@ -11,8 +11,12 @@ int scan1x;
 int scan1y;
 int scan2x;
 int scan2y;
+int times;
+int lastdownx[N*N];
+int lastdowny[N*N];
 
 int main(int argc, char *argv[]) {
+    times=0;
     n[N][N]=0;
     WorB=BLACK;
     PorC=COMPUTER;
@@ -39,6 +43,9 @@ int main(int argc, char *argv[]) {
             cheki();
             system("cls");
             putbroad();
+            lastdownx[steps]=x;
+            lastdowny[steps]=y;
+            times=0;
         }
     } else if (gamemode==1) {
         getchar();
@@ -66,6 +73,9 @@ int main(int argc, char *argv[]) {
             down();
             system("cls");
             putbroad();
+            lastdownx[steps]=x;
+            lastdowny[steps]=y;
+            times=0;
         }
     } else {
         while(1!=winjudge()&&1!=isDraw()) {
@@ -73,7 +83,9 @@ int main(int argc, char *argv[]) {
             down();
             system("cls");
             putbroad();
-            //Sleep(150);
+            lastdownx[steps]=x;
+            lastdowny[steps]=y;
+            times=0;
         }
     }
     WorB*=-1;
@@ -119,6 +131,7 @@ void putbroad() {
         printf("\n");
     }
     printf("steps:%d\n",steps);
+    printf("scaning times:%d\n",times);
     return;
 }
 int down() {

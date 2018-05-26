@@ -17,13 +17,13 @@
 #define HuoSi 10000000
 #define ChongSi 1000000
 #define HuoSan 100000
-#define MianSan 10000
+#define MianSan 1000
 #define HuoEr 1000
 #define MianEr 100
 #define DanYi 10
-#define Normal 1
+#define Normal 100
 
-#define FLOOR 4
+#define FLOOR 5
 
 typedef struct {
 	int ifcut;
