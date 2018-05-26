@@ -10,18 +10,38 @@
 #define WHITE -1
 #define BLACK 1
 #define NONE 0
+#define COMPUTER 1
+#define PLAYER -1
 
-int n[N][N]={0};
-int WorB=BLACK;
-int x=-1,y=-1;
-int lastx,lasty;
-int steps=0;
+#define LianWu 100000000
+#define HuoSi 10000000
+#define ChongSi 1000000
+#define HuoSan 100000
+#define MianSan 10000
+#define HuoEr 1000
+#define MianEr 100
+#define DanYi 10
+#define Normal 1
+
+#define FLOOR 4
+
+typedef struct {
+	int ifcut;
+	int score;
+	int todownx[FLOOR];
+	int todowny[FLOOR];
+}point;
 
 void putbroad();
-int winjudge(); 
+int winjudge();
 int metajudge(int dx,int dy);
 int down();
 void cheki();
+void cpybroad();
+int isDraw();
 void ai();
 int shapejudge(int,int);
-int metacount(int dx,int dy);
+int metajudge(int dx,int dy);
+int pointjudge(int x0,int y0,int PorC);
+int metacount(int dx,int dy,int x0,int y0);
+point scanning(int level,int,int,int,int,int,point);
