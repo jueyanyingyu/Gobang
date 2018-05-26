@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <windows.h>
+#include <time.h>
 
 #define N 15
 #define MAXSTEPS 225
@@ -23,7 +24,7 @@
 #define DanYi 10
 #define Normal 100
 
-#define FLOOR 5
+#define FLOOR 4
 
 typedef struct {
 	int ifcut;

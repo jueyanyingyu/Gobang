@@ -14,17 +14,20 @@ int scan2y;
 int times;
 int lastdownx[N*N];
 int lastdowny[N*N];
+clock_t start,stop;
 
 int main(int argc, char *argv[]) {
-    times=0;
-    n[N][N]=0;
-    WorB=BLACK;
-    PorC=COMPUTER;
-    steps=0;
-    scan1x=6;
-    scan1y=6;
-    scan2x=8;
-    scan2y=8;
+    {
+        times=0;
+        n[N][N]=0;
+        WorB=BLACK;
+        PorC=COMPUTER;
+        steps=0;
+        scan1x=6;
+        scan1y=6;
+        scan2x=8;
+        scan2y=8;
+    }
     printf("Select game mode\n");
     printf("'0' player vs player\n");
     printf("'1' player vs computer\n");
@@ -63,7 +66,9 @@ int main(int argc, char *argv[]) {
         while(1!=winjudge()&&1!=isDraw()) {
             if (ComHd==WorB) {
                 printf("waiting...");
+                start=clock();
                 ai();
+                stop=clock();
                 WorB=ComHd;
                 PorC=ComHd;
             } else {
@@ -79,7 +84,9 @@ int main(int argc, char *argv[]) {
         }
     } else {
         while(1!=winjudge()&&1!=isDraw()) {
+            start=clock();
             ai();
+            stop=clock();
             down();
             system("cls");
             putbroad();
@@ -132,6 +139,7 @@ void putbroad() {
     }
     printf("steps:%d\n",steps);
     printf("scaning times:%d\n",times);
+    printf("time cost:%dms\n",stop-start);
     return;
 }
 int down() {
