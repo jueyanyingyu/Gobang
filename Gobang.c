@@ -1,38 +1,56 @@
 #include "Gamesupport.h"
 
-int n[N][N];
-int WorB;
-int ComHd;
+int n[N][N];			//棋盘数据 
+int WorB;				//棋子颜色 
+int ComHd;				//计算机颜色 ;				
+int x,y;				//欲下位置 
+int lastx,lasty;		//之前所下位置 
+int steps;				//步骤 
+int scan1x;				//搜索范围 
 int PorC;
-int x,y;
-int lastx,lasty;
-int steps;
-int scan1x;
 int scan1y;
 int scan2x;
 int scan2y;
-int times;
-int lastdownx[N*N];
+int times;				//检索次数 
+int lastdownx[N*N];		//全局位置 
 int lastdowny[N*N];
-clock_t start,stop;
+int status[3][N][N][N*N];//白 空 黑 x y rand 
+int hash;
+clock_t start,stop;		//计时工具 
 
 int main(int argc, char *argv[]) {
     {
+    	srand(time(NULL));
         times=0;
         n[N][N]=0;
         WorB=BLACK;
-        PorC=COMPUTER;
+        int PorC=COMPUTER;
         steps=0;
         scan1x=6;
         scan1y=6;
         scan2x=8;
         scan2y=8;
-    }
+        for(int i=0;i<3;i++) {
+        	for(int j=0;j<N;j++) {
+        		for(int k=0;k<N;k++) {
+        			for(int l=0;l<N*N;l++) {
+        				status[i][j][k][l]=rand()%8192;
+					}
+				}
+			} 
+		}
+		hash=0;
+		for(int i=0;i<N;i++) {
+        	for(int j=0;j<N;j++) {
+        		hash^=status[n[i][j]+1][i][j][i*j];
+        	}
+    	}
+    }					//初始化全局变量 
     printf("Select game mode\n");
     printf("'0' player vs player\n");
     printf("'1' player vs computer\n");
     printf("'2' computer vs computer\n");
-    int gamemode;
+    int gamemode;		//选择游戏类型 
     scanf("%d",&gamemode);
     if (gamemode==0) {
         getchar();
@@ -48,7 +66,6 @@ int main(int argc, char *argv[]) {
             putbroad();
             lastdownx[steps]=x;
             lastdowny[steps]=y;
-            times=0;
         }
     } else if (gamemode==1) {
         getchar();
@@ -65,6 +82,7 @@ int main(int argc, char *argv[]) {
         putbroad();
         while(1!=winjudge()&&1!=isDraw()) {
             if (ComHd==WorB) {
+            	times=0;
                 printf("waiting...");
                 start=clock();
                 ai();
@@ -80,10 +98,10 @@ int main(int argc, char *argv[]) {
             putbroad();
             lastdownx[steps]=x;
             lastdowny[steps]=y;
-            times=0;
         }
     } else {
         while(1!=winjudge()&&1!=isDraw()) {
+            times=0;
             start=clock();
             ai();
             stop=clock();
@@ -92,7 +110,6 @@ int main(int argc, char *argv[]) {
             putbroad();
             lastdownx[steps]=x;
             lastdowny[steps]=y;
-            times=0;
         }
     }
     WorB*=-1;
@@ -104,7 +121,7 @@ int main(int argc, char *argv[]) {
     return TRUE;
 }
 void putbroad() {
-    printf("   ");
+    printf("   ");		//打印棋盘 
     for (int i=0; i<N; i++) {
         printf("%2d",i);
     }
@@ -142,7 +159,7 @@ void putbroad() {
     printf("time cost:%dms\n",stop-start);
     return;
 }
-int down() {
+int down() {			//改变棋盘数据 
     if (x>=0&&y>=0&&x<N&&y<N&&n[x][y]==0) {
         n[x][y]=WorB;
         if (x<=scan1x&&x-1>=0) {
@@ -157,15 +174,16 @@ int down() {
         if (x>=scan2y&&y+1<N) {
             scan2y=y+1;
         }
-        lastx=x;
+        lastx=x;		//反转颜色 
         lasty=y;
         steps++;
+        hash^=status[WorB+1][x][y][x*y];//更新hash值 
         WorB=WorB*-1;
         return TRUE;
     }
     return FALSE;
-}
-int winjudge() {
+}	
+int winjudge() {		//胜利判断 
     if(metajudge(1,0)) {
         return 1;
     } else if(metajudge(1,1)) {
@@ -177,7 +195,7 @@ int winjudge() {
     } else {
         return 0;
     }
-}
+}						//单个方向胜利判断 
 int metajudge(int dx,int dy) {
     int side=0,oside=0;
     WorB*=-1;
@@ -195,14 +213,14 @@ int metajudge(int dx,int dy) {
         return FALSE;
     }
 }
-int isDraw() {
+int isDraw() {			//平局检测 
     if (steps==225-1) {
         return TRUE;
     } else {
         return FALSE;
     }
 }
-void cheki() {
+void cheki() {			//悔棋 
     if (x==-1&&y==-1) {
         n[lastx][lasty]=0;
         WorB*=-1;

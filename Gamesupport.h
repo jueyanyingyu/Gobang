@@ -14,19 +14,20 @@
 #define COMPUTER 1
 #define PLAYER -1
 
-#define LianWu 100000000
-#define HuoSi 10000000
-#define ChongSi 1000000
+#define LianWu 500000
+#define HuoSi 120000
+#define ChongSi 110000
 #define HuoSan 100000
-#define MianSan 1000
-#define HuoEr 1000
-#define MianEr 100
-#define DanYi 10
-#define Normal 100
-
+#define MianSan 10000
+#define HuoEr 10000
+#define MianEr 1000
+#define DanYi 100
+#define Normal 1000
 #define FLOOR 4
 
-typedef struct {
+#define COUNT 100000
+
+typedef struct {			//单点数据结构体 
 	int ifcut;
 	int score;
 	int todownx[FLOOR];
@@ -46,3 +47,6 @@ int metajudge(int dx,int dy);
 int pointjudge(int x0,int y0,int PorC);
 int metacount(int dx,int dy,int x0,int y0);
 point scanning(int level,int,int,int,int,int,point);
+int MonteCarlo(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC);
+int zobrist(point list,int level);
+int searchhash(int hash);
