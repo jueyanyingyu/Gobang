@@ -15,6 +15,7 @@ extern int lastdownx[N*N];
 extern int lastdowny[N*N];
 extern int status[3][N][N][N*N];
 extern int hash;
+extern point test;
 
 int m[N][N];					//计算用模拟棋盘
 int mscore[FLOOR];				//各层分数极值（用于剪枝）
@@ -31,7 +32,7 @@ void cpybroad() {				//重新初始化思考棋盘
     }
     return;
 }
-void ai() {						//调用扫描函数或与表对照
+void ai(int WorB) {						//调用扫描函数或与表对照
     if (0) {
         MonteCarlo(0,scan1x,scan1y,scan2x,scan2y,COMPUTER);
         x=maxx;
@@ -51,7 +52,8 @@ void ai() {						//调用扫描函数或与表对照
         list.score=0;
         list.todownx[0]=0;
         list.todowny[0]=0;
-        todo=scanning(0,scan1x,scan1y,scan2x,scan2y,COMPUTER,list);
+        todo=scanning(0,scan1x,scan1y,scan2x,scan2y,COMPUTER,WorB,list);
+        test=todo;
         x=todo.todownx[0];
         y=todo.todowny[0];
         free(hashlist);
@@ -147,7 +149,7 @@ int metacount(int dx,int dy,int x0,int y0) {
         return Normal;
     }
 }
-point scanning(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC,point list) {
+point scanning(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC,int WorB,point list) {
     int tx3=scan3x,ty3=scan3y;		//扫描函数
     int tx4=scan4x,ty4=scan4y;		//递归实现
     int max=-1000000000;			//极值初始化
@@ -183,10 +185,8 @@ point scanning(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC,po
                             scan4y++;
                         }
                         m[x0][y0]=WorB;
-                        WorB*=-1;
                         point tm;
-                        tm=scanning(level+1,scan3x,scan3y,scan4x,scan4y,-1*PorC,list);
-                        WorB*=-1;
+                        tm=scanning(level+1,scan3x,scan3y,scan4x,scan4y,-1*PorC,-1*WorB,list);
                         m[x0][y0]=NONE;
                         scan3x=tx3;					//回复范围
                         scan3y=ty3;

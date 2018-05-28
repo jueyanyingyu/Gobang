@@ -46,7 +46,7 @@ int shapejudge(int,int);
 int metajudge(int dx,int dy);
 int pointjudge(int x0,int y0,int PorC);
 int metacount(int dx,int dy,int x0,int y0);
-point scanning(int level,int,int,int,int,int,point);
+point scanning(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC,int WorB,point list);
 int MonteCarlo(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC);
 int zobrist(point list,int level);
 int searchhash(int hash);
