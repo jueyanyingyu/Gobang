@@ -14,39 +14,53 @@
 #define COMPUTER 1
 #define PLAYER -1
 
-#define LianWu 500000
-#define HuoSi 120000
-#define ChongSi 110000
-#define HuoSan 100000
-#define MianSan 10000
-#define HuoEr 10000
-#define MianEr 1000
-#define DanYi 100
-#define Normal 1000
-#define FLOOR 4
+#define Large 1000000000
+#define Small -1000000000
+
+#define LianWu 500000000
+#define HuoSi 100000000
+#define ChongSi 20000000
+#define HuoSan 4000000
+#define MianSan 800000
+#define HuoEr 700000
+#define MianEr 100000
+#define DanYi 1000
+#define Normal 10
+
+#define FLOOR 6 
+
 
 #define COUNT 100000
 
-typedef struct {			//单点数据结构体 
-	int ifcut;
+typedef struct {
+	int x0;
+	int y0;
 	int score;
-	int todownx[FLOOR];
-	int todowny[FLOOR];
-}point;
+}coordinate;
+typedef struct {
+	int broad[N][N];
+}broad;
+typedef struct {
+	int scan3x;
+	int scan3y;
+	int scan4x;
+	int scan4y;
+}size;
 
-void putbroad();
-int winjudge();
-int metajudge(int dx,int dy);
-int down();
-void cheki();
-void cpybroad();
-int isDraw();
-void ai();
-int shapejudge(int,int);
-int metajudge(int dx,int dy);
-int pointjudge(int x0,int y0,int PorC);
-int metacount(int dx,int dy,int x0,int y0);
-point scanning(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC,int WorB,point list);
-int MonteCarlo(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC);
-int zobrist(point list,int level);
-int searchhash(int hash);
+void putbroad(broad abroad);
+int winjudge(broad abroad,coordinate todo,int WorB);
+int down(coordinate todo,int WorB);
+//void cheki();
+//void cpybroad();
+//int isDraw();
+coordinate ai(int WorB);
+//int shapejudge(int,int);
+int metajudge(broad abroad,coordinate todo,int dx,int dy,int WorB);
+int pointjudge(int x0,int y0,broad tpbd);
+int metacount(int dx,int dy,int x0,int y0,broad tpbd);
+int scanning(int level,size newsize,int PorC,int WorB,broad tpbd);
+size expand(size tpsize,int x0,int y0);
+void sort(int PorC,broad tpbd,coordinate* cdlist,int length);
+//int MonteCarlo(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC);
+//int zobrist(point list,int level);
+//int searchhash(int hash);
