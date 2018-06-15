@@ -128,116 +128,108 @@ int metacount(int dx,int dy,int x0,int y0,broad tpbd) {
     }
     return score;
 }
-int scanning(int level,size tpsize,int PorC,int WorB,broad tpbd) {
+int broadcount(broad newbroad,size tpsize,int WorB) {
     int tx3=tpsize.scan3x,ty3=tpsize.scan3y;
     int tx4=tpsize.scan4x,ty4=tpsize.scan4y;
+    int score;
+    int scoreC=0;
+    int scoreP=0;
+    for (int k=tx3; k<=tx4; k++) {
+        for (int l=ty3; l<=ty4; l++) {
+            if ((newbroad.broad)[k][l]!=NONE) {
+                score=pointjudge(k,l,newbroad);
+                times++;
+                if ((newbroad.broad)[k][l]==WorB) {
+                    if (score>scoreP) {
+                        scoreP=score;
+                    }
+                } else {
+                    if (score>scoreC) {
+                        scoreC=score;
+                    }
+                }
+            }
+        }
+    }
+    return scoreC-scoreP;
+}
+int gen(coordinate* cdlist,size tpsize,broad tpbd,int WorB) {
+    int tx3=tpsize.scan3x,ty3=tpsize.scan3y;
+    int tx4=tpsize.scan4x,ty4=tpsize.scan4y;
+    int count=0;
+    for (int x0=tx3; x0<=tx4; x0++) {
+        for (int y0=ty3; y0<=ty4; y0++) {
+            if ((tpbd.broad)[x0][y0]==NONE) {
+                (cdlist[count]).x0=x0;
+                (cdlist[count]).y0=y0;
+                (tpbd.broad)[x0][y0]=WorB;
+                (cdlist[count]).score=pointjudge(x0,y0,tpbd);
+                (tpbd.broad)[x0][y0]=NONE;
+                count++;
+            }
+        }
+    }
+    return count;
+}
+int scanning(int level,size tpsize,int PorC,int WorB,broad tpbd) {
     int x,y;
     int max=Small;
     int min=Large;
-    if (level<FLOOR-1) {
-        coordinate cdlist[N*N];
-        int count=0;
-        for (int x0=tx3; x0<=tx4; x0++) {
-            for (int y0=ty3; y0<=ty4; y0++) {
-                if ((tpbd.broad)[x0][y0]==NONE) {
-                    (cdlist[count]).x0=x0;
-                    (cdlist[count]).y0=y0;
-                    (tpbd.broad)[x0][y0]=WorB;
-                    (cdlist[count]).score=pointjudge(x0,y0,tpbd);
-                    (tpbd.broad)[x0][y0]=NONE;
-                    count++;
-                }
+    coordinate cdlist[N*N];
+    int length=gen(cdlist,tpsize,tpbd,WorB);
+    sort(PorC,tpbd,cdlist,length);
+    //迭代加深
+    if ((cdlist[0]).score>=LianWu) {
+        if (PorC==COMPUTER) {
+            if (level==0) {
+                tox=(cdlist[0]).x0;
+                toy=(cdlist[0]).y0;
             }
-        }
-        int length=count;
-        sort(PorC,tpbd,cdlist,length);
-        //迭代加深
-        if ((cdlist[0]).score>=LianWu) {
-            if (PorC==COMPUTER) {
-                if (level==0) {
-                    tox=(cdlist[0]).x0;
-                    toy=(cdlist[0]).y0;
-                }
-                return Large;
-            } else {
-                return Small;
-            }
+            mscore[level]=Large;
+            return Large;
         } else {
-            int tpscore;
-            broad newbroad;
-            for (int i=0; i<length; i++) {
-                broad newbroad=tpbd;
-                (newbroad.broad)[(cdlist[i]).x0][(cdlist[i]).y0]=WorB;
-                tpscore=scanning(level+1,expand(tpsize,(*(cdlist+i)).x0,(*(cdlist+i)).y0),-1*WorB,-1*PorC,newbroad);
-                if (PorC==PLAYER&&tpscore<mscore[level]) {
-                    return tpscore;
-                } else if (PorC==COMPUTER&&tpscore>mscore[level]) {
-                    return tpscore;
-                }
-                if (PorC==PLAYER&&tpscore<=min) {
-                    min=tpscore;
-                } else if (PorC==COMPUTER&&tpscore>=max) {
-                    max=tpscore;
-                    if (level==0) {
-                        x=(cdlist[i]).x0;
-                        y=(cdlist[i]).y0;
-                    }
-                }
-            }
-            if (PorC==PLAYER) {
-                mscore[level]=min;
-                return min;
-            } else {
-                mscore[level]=max;
-                if (level==0) {
-                    tox=x;
-                    toy=y;
-                }
-                return max;
-            }
+        	mscore[level]=Small;
+            return Small;
         }
     } else {
-        for (int x0=tx3; x0<=tx4; x0++) {
-            for (int y0=ty3; y0<=ty4; y0++) {
-                if ((tpbd.broad)[x0][y0]==NONE) {
-                    int score;
-                    int scoreC=0;
-                    int scoreP=0;
-                    (tpbd.broad)[x0][y0]=WorB;
-                    for (int k=tx3; k<=tx4; k++) {
-                        for (int l=ty3; l<=ty4; l++) {
-                            if ((tpbd.broad)[k][l]!=NONE) {
-                                score=pointjudge(k,l,tpbd);
-                                times++;
-                                if ((tpbd.broad)[k][l]==WorB) {
-                                    if (score>scoreP) {
-                                        scoreP=score;
-                                    }
-                                } else {
-                                    if (score>scoreC) {
-                                        scoreC=score;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //printf("%d ",scoreC-scoreP);
-                    /*system("cls");
-                    putbroad(tpbd);*/
+        int tpscore;
+        broad newbroad;
+        for (int i=0; i<length; i++) {
+            newbroad=tpbd;
+            (newbroad.broad)[(cdlist[i]).x0][(cdlist[i]).y0]=WorB;
+            if (level==FLOOR-1) {
+                tpscore=broadcount(newbroad,tpsize,WorB);
+            } else {
+                tpscore=scanning(level+1,expand(tpsize,(*(cdlist+i)).x0,(*(cdlist+i)).y0),-1*WorB,-1*PorC,newbroad);
+            }
+            
+            if (PorC==PLAYER&&tpscore<mscore[level]) {
+                return tpscore;
+            } else if (PorC==COMPUTER&&tpscore>mscore[level]) {
+                return tpscore;
+            }
 
-                    if (scoreC-scoreP<mscore[level]) {
-                        return scoreC-scoreP;
-                    }
-
-                    if (scoreC-scoreP<=min) {
-                        min=scoreC-scoreP;
-                    }
-                    (tpbd.broad)[x0][y0]=NONE;
+            if (PorC==PLAYER&&tpscore<=min) {
+                min=tpscore;
+            } else if (PorC==COMPUTER&&tpscore>=max) {
+                max=tpscore;
+                if (level==0) {
+                    x=(cdlist[i]).x0;
+                    y=(cdlist[i]).y0;
                 }
             }
         }
-        mscore[level]=min;
-        return min;
+        if (PorC==PLAYER) {
+            mscore[level]=min;
+            return min;
+        } else {
+            mscore[level]=max;
+            if (level==0) {
+                tox=x;
+                toy=y;
+            }
+            return max;
+        }
     }
 }
 size expand(size tpsize,int x0,int y0) {
@@ -273,8 +265,41 @@ void sort(int PorC,broad tpbd,coordinate* cdlist,int length) {
     }
     return;
 }
+int kill(size tpsize,int PorC,int WorB,broad tpbd,int lastscore) {
+    int tx3=tpsize.scan3x,ty3=tpsize.scan3y;
+    int tx4=tpsize.scan4x,ty4=tpsize.scan4y;
+    coordinate cdlist[N*N];
+    int length=gen(cdlist,tpsize,tpbd,WorB);
+    sort(PorC,tpbd,cdlist,length);
+    if ((cdlist[0]).score>=LianWu) {
+        if (PorC==PLAYER) {
+            return Small;
+        } else {
+            return Large;
+        }
+    }
+    broad newbroad;
+    int tpscore;
+    for (int i=0; i<length; i++) {
+        newbroad=tpbd;
+        
+        if ((cdlist[i]).score<HuoSan) {
+        	break;
+		}
+		
+        if ((cdlist[i]).score<=lastscore) {
+            (newbroad.broad)[(cdlist[i]).x0][(cdlist[i]).y0]=WorB;
+            tpscore=kill(expand(tpsize,(*(cdlist+i)).x0,(*(cdlist+i)).y0),-1*PorC,-1*WorB,newbroad,(cdlist[i]).score);
+        } else {
+            if (PorC==PLAYER) {
+                return broadcount(newbroad,tpsize,-1*WorB);
+            } else {
+                (newbroad.broad)[(cdlist[i]).x0][(cdlist[i]).y0]=WorB;
+                return broadcount(newbroad,tpsize,WorB);
+            }
+        }
 
-int kill(size newsize,int PorC,int WorB,broad tpbd) {
+    }
 
 }
 /*
