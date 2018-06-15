@@ -134,45 +134,45 @@ int scanning(int level,size tpsize,int PorC,int WorB,broad tpbd) {
     int x,y;
     int max=Small;
     int min=Large;
-    if (level<FLOOR-1) {
-        coordinate cdlist[N*N];
-        int count=0;
-        for (int x0=tx3; x0<=tx4; x0++) {
-            for (int y0=ty3; y0<=ty4; y0++) {
-                if ((tpbd.broad)[x0][y0]==NONE) {
-                    (cdlist[count]).x0=x0;
-                    (cdlist[count]).y0=y0;
-                    (tpbd.broad)[x0][y0]=WorB;
-                    (cdlist[count]).score=pointjudge(x0,y0,tpbd);
-                    (tpbd.broad)[x0][y0]=NONE;
-                    count++;
-                }
+    coordinate cdlist[N*N];
+    int count=0;
+    for (int x0=tx3; x0<=tx4; x0++) {
+        for (int y0=ty3; y0<=ty4; y0++) {
+            if ((tpbd.broad)[x0][y0]==NONE) {
+                (cdlist[count]).x0=x0;
+                (cdlist[count]).y0=y0;
+                (tpbd.broad)[x0][y0]=WorB;
+                (cdlist[count]).score=pointjudge(x0,y0,tpbd);
+                (tpbd.broad)[x0][y0]=NONE;
+                count++;
             }
         }
-        int length=count;
-        /*for (int i=0;i<length;i++) {
-        	printf("before %d %d %d\n",(cdlist[i]).x0,(cdlist[i]).y0,(cdlist[i]).score);
+    }
+    int length=count;
+    /*for (int i=0;i<length;i++) {
+    	printf("before %d %d %d\n",(cdlist[i]).x0,(cdlist[i]).y0,(cdlist[i]).score);
+    }
+    getchar();*/
+    sort(PorC,tpbd,cdlist,length);
+    /*if (level==0) {
+        for (int i=0; i<length; i++) {
+            printf("last %d %d %d\n",(cdlist[i]).x0,(cdlist[i]).y0,(cdlist[i]).score);
         }
-        getchar();*/
-        sort(PorC,tpbd,cdlist,length);
-        /*if (level==0) {
-            for (int i=0; i<length; i++) {
-                printf("last %d %d %d\n",(cdlist[i]).x0,(cdlist[i]).y0,(cdlist[i]).score);
+        getchar();
+    }*/
+    //迭代加深
+    if ((cdlist[0]).score>=LianWu||(cdlist[length-1]).score>=LianWu) {
+        if (PorC==COMPUTER) {
+            if (level==0) {
+                tox=(cdlist[0]).x0;
+                toy=(cdlist[0]).y0;
             }
-            getchar();
-        }*/
-        //迭代加深
-        if ((cdlist[0]).score>=LianWu||(cdlist[length-1]).score>=LianWu) {
-            if (PorC==COMPUTER) {
-                if (level==0) {
-                    tox=(cdlist[0]).x0;
-                    toy=(cdlist[0]).y0;
-                }
-                return Large;
-            } else {
-                return Small;
-            }
+            return Large;
         } else {
+            return Small;
+        }
+    } else {
+        if (level<FLOOR-1) {
             int tpscore;
             broad newbroad;
             for (int i=0; i<length; i++) {
@@ -206,49 +206,49 @@ int scanning(int level,size tpsize,int PorC,int WorB,broad tpbd) {
                 }
                 return max;
             }
-        }
-    } else {
-        for (int x0=tx3; x0<=tx4; x0++) {
-            for (int y0=ty3; y0<=ty4; y0++) {
-                if ((tpbd.broad)[x0][y0]==NONE) {
-                    int score;
-                    int scoreC=0;
-                    int scoreP=0;
-                    (tpbd.broad)[x0][y0]=WorB;
-                    for (int k=tx3; k<=tx4; k++) {
-                        for (int l=ty3; l<=ty4; l++) {
-                            if ((tpbd.broad)[k][l]!=NONE) {
-                                score=pointjudge(k,l,tpbd);
-                                times++;
-                                if ((tpbd.broad)[k][l]==WorB) {
-                                    if (score>scoreP) {
-                                        scoreP=score;
-                                    }
-                                } else {
-                                    if (score>scoreC) {
-                                        scoreC=score;
+        } else {
+            for (int x0=tx3; x0<=tx4; x0++) {
+                for (int y0=ty3; y0<=ty4; y0++) {
+                    if ((tpbd.broad)[x0][y0]==NONE) {
+                        int score;
+                        int scoreC=0;
+                        int scoreP=0;
+                        (tpbd.broad)[x0][y0]=WorB;
+                        for (int k=tx3; k<=tx4; k++) {
+                            for (int l=ty3; l<=ty4; l++) {
+                                if ((tpbd.broad)[k][l]!=NONE) {
+                                    score=pointjudge(k,l,tpbd);
+                                    times++;
+                                    if ((tpbd.broad)[k][l]==WorB) {
+                                        if (score>scoreP) {
+                                            scoreP=score;
+                                        }
+                                    } else {
+                                        if (score>scoreC) {
+                                            scoreC=score;
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                    //printf("%d ",scoreC-scoreP);
-                    /*system("cls");
-                    putbroad(tpbd);*/
+                        //printf("%d ",scoreC-scoreP);
+                        /*system("cls");
+                        putbroad(tpbd);*/
 
-                    if (scoreC-scoreP<mscore[level]) {
-                        return scoreC-scoreP;
-                    }
+                        if (scoreC-scoreP<mscore[level]) {
+                            return scoreC-scoreP;
+                        }
 
-                    if (scoreC-scoreP<=min) {
-                        min=scoreC-scoreP;
+                        if (scoreC-scoreP<=min) {
+                            min=scoreC-scoreP;
+                        }
+                        (tpbd.broad)[x0][y0]=NONE;
                     }
-                    (tpbd.broad)[x0][y0]=NONE;
                 }
             }
+            mscore[level]=min;
+            return min;
         }
-        mscore[level]=min;
-        return min;
     }
 }
 size expand(size tpsize,int x0,int y0) {
@@ -268,36 +268,19 @@ size expand(size tpsize,int x0,int y0) {
     return newsize;
 }
 void sort(int PorC,broad tpbd,coordinate* cdlist,int length) {
-    if (PorC==COMPUTER) {
-        int max=Small;
-        int maxid;
-        for (int i=0; i<length; i++) {
-            for (int j=i; j<length; j++) {
-                if ((*(cdlist+j)).score>max) {
-                    max=(*(cdlist+j)).score;
-                    maxid=j;
-                }
+    int max=Small;
+    int maxid;
+    for (int i=0; i<length; i++) {
+        for (int j=i; j<length; j++) {
+            if ((*(cdlist+j)).score>max) {
+                max=(*(cdlist+j)).score;
+                maxid=j;
             }
-            coordinate temp=*(cdlist+maxid);
-            *(cdlist+maxid)=*(cdlist+i);
-            *(cdlist+i)=temp;
-            max=Small;
         }
-    } else {
-        int min=Large;
-        int minid;
-        for (int i=0; i<length; i++) {
-            for (int j=i; j<length; j++) {
-                if ((*(cdlist+j)).score<min) {
-                    min=(*(cdlist+j)).score;
-                    minid=j;
-                }
-            }
-            coordinate temp=*(cdlist+minid);
-            *(cdlist+minid)=*(cdlist+i);
-            *(cdlist+i)=temp;
-            min=Large;
-        }
+        coordinate temp=*(cdlist+maxid);
+        *(cdlist+maxid)=*(cdlist+i);
+        *(cdlist+i)=temp;
+        max=Small;
     }
     return;
 }
