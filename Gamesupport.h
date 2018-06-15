@@ -61,7 +61,7 @@ int metacount(int dx,int dy,int x0,int y0,broad tpbd);
 int scanning(int level,size newsize,int PorC,int WorB,broad tpbd);
 size expand(size tpsize,int x0,int y0);
 void sort(int PorC,broad tpbd,coordinate* cdlist,int length);
-int kill(int level,size newsize,int PorC,int WorB,broad tpbd);
+int kill(size newsize,int PorC,int WorB,broad tpbd);
 //int MonteCarlo(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC);
 //int zobrist(point list,int level);
 //int searchhash(int hash);
