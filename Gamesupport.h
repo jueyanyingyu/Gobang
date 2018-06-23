@@ -65,7 +65,7 @@ int broadcount(broad newbroad,size tpsize,int WorB);
 int gen(coordinate* cdlist,size tpsize,broad tpbd,int WorB);
 int scanning(int level,size newsize,int PorC,int WorB,broad tpbd);
 size expand(size tpsize,int x0,int y0);
-void sort(int PorC,broad tpbd,coordinate* cdlist,int length);
+void sort(coordinate* cdlist,int bengin,int end);
 int kill(size newsize,int PorC,int WorB,broad newbroad,int lastscore);
 //int MonteCarlo(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC);
 //int zobrist(point list,int level);

@@ -177,7 +177,19 @@ int scanning(int level,size tpsize,int PorC,int WorB,broad tpbd) {
     int min=Large;
     coordinate cdlist[N*N];
     int length=gen(cdlist,tpsize,tpbd,WorB);
-    sort(PorC,tpbd,cdlist,length);
+    
+    /*for (int i=0;i<length;i++) {
+    	printf("%d ",(*(cdlist+i)).score);
+	}
+	printf("\n");*/
+	
+    sort(cdlist,0,length-1);
+    
+    /*for (int i=0;i<length;i++) {
+    	printf("%d ",(*(cdlist+i)).score);
+	}
+	printf("\n");*/
+	
     //µü´ú¼ÓÉî
     if ((cdlist[0]).score>=LianWu) {
         if (PorC==COMPUTER) {
@@ -248,8 +260,44 @@ size expand(size tpsize,int x0,int y0) {
     }
     return newsize;
 }
-void sort(int PorC,broad tpbd,coordinate* cdlist,int length) {
-    int max=Small;
+void sort(coordinate* cdlist,int begin,int end) {
+	if (end==begin) {
+		if ((*(cdlist+end)).score>(*(cdlist+begin)).score) {
+			coordinate temp;
+			temp=*(cdlist+end);
+			*(cdlist+end)=*(cdlist+begin);
+			*(cdlist+begin)=temp;
+		} else {
+			return;
+		}
+	} else {
+		coordinate tplist[end-begin+1];
+		sort(cdlist,begin,(begin+end-1)/2);
+		sort(cdlist,(begin+end+1)/2,end);
+		for (int i=0,j=begin,k=(begin+end+1)/2;i<end-begin+1;i++) {
+			if (j<=(begin+end-1)/2&&k<=end) {
+				if ((*(cdlist+j)).score>(*(cdlist+k)).score) {
+					tplist[i]=*(cdlist+j);
+					j++;
+				} else {
+					tplist[i]=*(cdlist+k);
+					k++;
+				}
+			} else if (j>(begin+end-1)/2) {
+				tplist[i]=*(cdlist+k);
+				k++;
+			} else {
+				tplist[i]=*(cdlist+j);
+				j++;
+			}
+		}
+		for (int i=0;i<end-begin+1;i++) {
+			*(cdlist+begin+i)=tplist[i];
+		}
+		return;
+	}
+	/*
+	int max=Small;
     int maxid;
     for (int i=0; i<length; i++) {
         for (int j=i; j<length; j++) {
@@ -264,13 +312,14 @@ void sort(int PorC,broad tpbd,coordinate* cdlist,int length) {
         max=Small;
     }
     return;
+    */
 }
 int kill(size tpsize,int PorC,int WorB,broad tpbd,int lastscore) {
     int tx3=tpsize.scan3x,ty3=tpsize.scan3y;
     int tx4=tpsize.scan4x,ty4=tpsize.scan4y;
     coordinate cdlist[N*N];
     int length=gen(cdlist,tpsize,tpbd,WorB);
-    sort(PorC,tpbd,cdlist,length);
+    sort(cdlist,0,length-1);
     if ((cdlist[0]).score>=LianWu) {
         if (PorC==PLAYER) {
             return Small;
