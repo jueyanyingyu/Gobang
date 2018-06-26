@@ -1,0 +1,14 @@
+# depslib dependency file v1.0
+1529841408 source:d:\ÎÄµµ\github\gobang\ai.c
+	"Gamesupport.h"
+
+1529838462 d:\ÎÄµµ\github\gobang\gamesupport.h
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	<conio.h>
+	<time.h>
+
+1529765820 source:d:\ÎÄµµ\github\gobang\gobang.c
+	"Gamesupport.h"
+

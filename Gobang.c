@@ -1,64 +1,36 @@
 #include "Gamesupport.h"
 
-broad tbroad;
-broad history[N*N];
-coordinate historyxy[N*N];
-size historysize[N*N];
-int steps;				//步骤
-size tsize;
+broad tbroad;			//当前棋局
+size tsize;				//当前范围
+broad history[N*N];		//全局历史
+coordinate historyxy[N*N];		//步骤历史
+size historysize[N*N];			//范围历史
+int steps;				//步数
 int times;				//检索次数
-int status[3][N][N][N*N];//白 空 黑 x y rand
-int hash;
 clock_t start;
 clock_t stop;		//计时工具
 
-extern int tox,toy;
+extern int tox,toy;		//欲下位置
 
 int main(int argc, char *argv[]) {
-	srand(time(NULL));
-	times=0;
-	tox=7;
-	toy=7;
-	tsize.scan3x=7;
-	tsize.scan3y=7;
-	tsize.scan4x=7;
-	tsize.scan4y=7;
-	(tbroad.broad)[0][0]=NONE;
-	history[0]=tbroad;
-	(historyxy[0]).x0=tox;
-	(historyxy[0]).y0=toy;
-	historysize[0]=tsize;
-	steps=0;
-	for(int i=0; i<3; i++) {
-		for(int j=0; j<N; j++) {
-			for(int k=0; k<N; k++) {
-				for(int l=0; l<N*N; l++) {
-					status[i][j][k][l]=rand()%8192;
-				}
-			}
-		}
-	}
-	hash=0;
-	/*
-	for(int i=0; i<N; i++) {
-		for(int j=0; j<N; j++) {
-			hash^=status[n[i][j]+1][i][j][i*j];
-		}
-	}	*/				//初始化全局变量
-	printf("Select game mode\n");
-	printf("'0' player vs player\n");
-	printf("'1' player vs computer\n");
-	printf("'2' computer vs computer\n");
+	//初始化全局变量
+	initialize();
+	//打印标题
+	title();
+	printf("                           Select game mode\n\n");
+	printf("                         '0' player vs player\n\n");
+	printf("                         '1' player vs computer\n\n");
+	printf("                         '2' computer vs computer\n\n");
 	coordinate todo;
 	int WorB=BLACK;
 	int gamemode;		//选择游戏类型
 	scanf("%d",&gamemode);
+	getchar();
+	system("cls");
+	//人人模式
 	if (gamemode==0) {
-		getchar();
-		system("cls");
 		putbroad(tbroad);
 		while(1) {
-			//printf("\n\"-1,-1\"to undo\n");
 			todo=input(todo);
 			if (down(todo,WorB)) {
 				if (winjudge(tbroad,todo,WorB)) {
@@ -70,12 +42,13 @@ int main(int argc, char *argv[]) {
 			}
 			system("cls");
 			putbroad(tbroad);
+			printf("\ntime cost:%dms\n",stop-start);
 		}
+		//人机模式
 	} else if (gamemode==1) {
-		getchar();
-		system("cls");
-		printf("'0' computer first\n");
-		printf("'1' player first\n");
+		title();
+		printf("                         '0' computer first\n\n");
+		printf("                         '1' player first\n");
 		int ComHd;
 		if ('0'==getchar()) {
 			ComHd=BLACK;
@@ -108,9 +81,8 @@ int main(int argc, char *argv[]) {
 			printf("\nscaning times:%d",times);
 			printf("\ntime cost:%dms\n",stop-start);
 		}
+		//机机模式
 	} else {
-		getchar();
-		system("cls");
 		putbroad(tbroad);
 		while(1) {
 			times=0;
@@ -144,6 +116,44 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	return TRUE;
+}
+void initialize() {
+	srand(time(NULL));
+	times=0;
+	tox=7;
+	toy=7;
+	tsize.scan3x=7;
+	tsize.scan3y=7;
+	tsize.scan4x=7;
+	tsize.scan4y=7;
+	(tbroad.broad)[0][0]=NONE;
+	history[0]=tbroad;
+	(historyxy[0]).x0=tox;
+	(historyxy[0]).y0=toy;
+	historysize[0]=tsize;
+	steps=0;
+}
+void title() {
+	FILE *p;
+	p=fopen("title.txt","rb");
+	if (p!=NULL) {
+		char *title=NULL;
+		int fsize;
+		fseek(p,0,SEEK_END);
+		fsize=ftell(p);
+		fseek(p,0,SEEK_SET);
+		title=(char*)malloc(fsize);
+		fread(title,sizeof(char),fsize,p);
+		if (title!=NULL) {
+			for (int i=0; i<fsize; i++) {
+				printf("%c",*(title+i));
+			}
+		}
+		printf("\n\n\n");
+
+	}
+	printf("GoBang\n");
+	return;
 }
 void putbroad(broad abroad) {
 	printf("   0 1 2 3 4 5 6 7 8 91011121314\n");
@@ -183,6 +193,7 @@ void putbroad(broad abroad) {
 	if (steps!=0) {
 		printf("\nlastx:%d lasty:%d\n",tox,toy);
 	}
+	printf("\n'ESC' to cheki\n");
 	return;
 }
 int down(coordinate todo,int WorB) {			//改变棋盘数据
@@ -194,7 +205,6 @@ int down(coordinate todo,int WorB) {			//改变棋盘数据
 		(historyxy[steps]).x0=todo.x0;
 		(historyxy[steps]).y0=todo.y0;
 		historysize[steps]=tsize;
-		//hash^=status[WorB+1][x][y][x*y];//更新hash值
 		tox=todo.x0;
 		toy=todo.y0;
 		return TRUE;
@@ -214,8 +224,9 @@ int winjudge(broad abroad,coordinate todo,int WorB) {		//胜利判断
 	} else {
 		return 0;
 	}
-}						//单个方向胜利判断
+}
 int metajudge(broad abroad,coordinate todo,int dx,int dy,int WorB) {
+	//单个方向胜利判断
 	int side=0,oside=0;
 	for(int i=1; todo.x0+i*dx>=0&&todo.x0+i*dx<N&&todo.y0+i*dy>=0&&todo.y0+i*dy<N&&(abroad.broad)[todo.x0+i*dx][todo.y0+i*dy]==WorB; i++) {
 		side++;
@@ -308,4 +319,3 @@ int cheki() {			//悔棋
 		return FALSE;
 	}
 }
-

@@ -22,21 +22,20 @@
 #define HuoSi 100000000
 #define ChongSi 20000000
 #define HuoSan 4000000
-#define MianSan 800000
-#define HuoEr 700000
-#define MianEr 100000
+#define MianSan 80000
+#define HuoEr 70000
+#define MianEr 10000
 #define DanYi 1000
 #define Normal 10
 
-#define FLOOR 6
-
-
-#define COUNT 100000
+#define FLOOR 8
 
 typedef struct {
 	int x0;
 	int y0;
 	int score;
+	int scoreS;
+	int scoreO;
 }coordinate;
 typedef struct {
 	int broad[N][N];
@@ -48,15 +47,15 @@ typedef struct {
 	int scan4y;
 }size;
 
+void initialize();
+void title();
 void gotoxy(int x, int y);
 void putbroad(broad abroad);
-int winjudge(broad abroad,coordinate todo,int WorB);
+int winjudge(broad abroad,coordinate todo,int WorB); 
 int down(coordinate todo,int WorB);
 int cheki();
-//void cpybroad();
 int isDraw();
 coordinate ai(int WorB);
-//int shapejudge(int,int);
 coordinate input(coordinate todo);
 int metajudge(broad abroad,coordinate todo,int dx,int dy,int WorB);
 int pointjudge(int x0,int y0,broad tpbd);
@@ -66,7 +65,4 @@ int gen(coordinate* cdlist,size tpsize,broad tpbd,int WorB);
 int scanning(int level,size newsize,int PorC,int WorB,broad tpbd);
 size expand(size tpsize,int x0,int y0);
 void sort(coordinate* cdlist,int bengin,int end);
-int kill(size newsize,int PorC,int WorB,broad newbroad,int lastscore);
-//int MonteCarlo(int level,int scan3x,int scan3y,int scan4x,int scan4y,int PorC);
-//int zobrist(point list,int level);
-//int searchhash(int hash);
+int vct(int level,size newsize,int PorC,int WorB,broad newbroad);
